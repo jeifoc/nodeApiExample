@@ -10,7 +10,7 @@ const pool = mysql.createPool({
   host: "localhost", // Cambia esto por tu host
   user: "cristian", // Cambia por tu usuario de MySQL
   password: "root", // Cambia por tu contraseña
-  database: "mySql_db", // Cambia por el nombre de tu base de datos
+  database: "localMysqlDB", // Cambia por el nombre de tu base de datos
 });
 
 app.use(express.json());

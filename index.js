@@ -50,6 +50,39 @@ app.get("/users", async (req, res) => {
   }
 });
 
+// Endpoint POST /users para crear nuevos usuarios
+app.post("/users", async (req, res) => {
+  const { name, email } = req.body;
+
+  // Validación básica
+  if (!name || !email) {
+    return res.status(400).json({ error: "Nombre y email son requeridos" });
+  }
+
+  try {
+    // Consulta para insertar nuevo usuario
+    const insertQuery = "INSERT INTO users (name, email) VALUES (?, ?)";
+    const [result] = await pool.query(insertQuery, [name, email]);
+
+    // Consulta para obtener el usuario recién creado
+    const [newUser] = await pool.query(
+      "SELECT id, name, email FROM users WHERE id = ?",
+      [result.insertId]
+    );
+
+    res.status(201).json({
+      message: "Usuario creado exitosamente",
+      user: newUser[0],
+    });
+  } catch (err) {
+    // Manejo de errores específicos
+    if (err.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ error: "El email ya está registrado" });
+    }
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Iniciar el servidor
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);

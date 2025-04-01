@@ -6,10 +6,11 @@ const port = 3000;
 // Configuración de la conexión MySQL
 const pool = mysql.createPool({
   connectionLimit: 10,
+  port: "3300", // Cambia esto por tu puerto de MySQL
   host: "localhost", // Cambia esto por tu host
-  user: "tu_usuario", // Cambia por tu usuario de MySQL
-  password: "tu_password", // Cambia por tu contraseña
-  database: "tu_basedatos", // Cambia por el nombre de tu base de datos
+  user: "cristian", // Cambia por tu usuario de MySQL
+  password: "root", // Cambia por tu contraseña
+  database: "mySql_db", // Cambia por el nombre de tu base de datos
 });
 
 app.use(express.json());

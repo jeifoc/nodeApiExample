@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require("mysql2/promise"); // Usamos mysql2 con promesas
 const express = require("express");
 const app = express();
 const port = 3000;
@@ -11,6 +11,8 @@ const pool = mysql.createPool({
   user: "cristian", // Cambia por tu usuario de MySQL
   password: "root", // Cambia por tu contraseña
   database: "localMysqlDB", // Cambia por el nombre de tu base de datos
+  waitForConnections: true,
+  queueLimit: 0,
 });
 
 app.use(express.json());
@@ -29,26 +31,19 @@ app.get("/users", async (req, res) => {
     const countQuery = "SELECT COUNT(*) AS count FROM users";
 
     // Ejecutar ambas consultas en paralelo
-    pool.query(getUsersQuery, [limit, offset], (error, users) => {
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
+    const [users, [total]] = await Promise.all([
+      pool.query(getUsersQuery, [limit, offset]),
+      pool.query(countQuery),
+    ]);
 
-      pool.query(countQuery, (countError, total) => {
-        if (countError) {
-          return res.status(500).json({ error: countError.message });
-        }
-
-        res.json({
-          data: users,
-          pagination: {
-            page,
-            limit,
-            total: total[0].count,
-            totalPages: Math.ceil(total[0].count / limit),
-          },
-        });
-      });
+    res.json({
+      data: users[0],
+      pagination: {
+        page,
+        limit,
+        total: total[0].count,
+        totalPages: Math.ceil(total[0].count / limit),
+      },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

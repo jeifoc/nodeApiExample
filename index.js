@@ -6,7 +6,7 @@ const port = 3000;
 // Configuración de la conexión MySQL
 const pool = mysql.createPool({
   connectionLimit: 10,
-  port: "3300", // Cambia esto por tu puerto de MySQL
+  port: "3306", // Cambia esto por tu puerto de MySQL
   host: "localhost", // Cambia esto por tu host
   user: "cristian", // Cambia por tu usuario de MySQL
   password: "root", // Cambia por tu contraseña
